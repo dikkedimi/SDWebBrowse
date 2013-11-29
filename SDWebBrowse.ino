@@ -1,3 +1,23 @@
+#include <ArduinoStream.h>
+#include <bufstream.h>
+#include <ios.h>
+#include <iostream.h>
+#include <istream.h>
+#include <MinimumSerial.h>
+#include <ostream.h>
+#include <Sd2Card.h>
+#include <SdBaseFile.h>
+#include <SdFat.h>
+#include <SdFatConfig.h>
+#include <SdFatmainpage.h>
+#include <SdFatStructs.h>
+#include <SdFatUtil.h>
+#include <SdFile.h>
+#include <SdInfo.h>
+#include <SdStream.h>
+#include <SdVolume.h>
+
+
 /*
  * USERS OF ARDUINO 0023 AND EARLIER: use the 'SDWebBrowse.pde' sketch...
  * 'SDWebBrowse.ino' can be ignored.
@@ -24,8 +44,6 @@
  * Pull requests should go to http://github.com/adafruit/SDWebBrowse
  */
 
-#include <SdFat.h>
-#include <SdFatUtil.h>
 #include <Ethernet.h>
 #include <SPI.h>
 
@@ -65,8 +83,9 @@ void setup() {
   // breadboards.  use SPI_FULL_SPEED for better performance.
   pinMode(10, OUTPUT);                       // set the SS pin as an output (necessary!)
   digitalWrite(10, HIGH);                    // but turn off the W5100 chip!
-
-  if (!card.init(SPI_HALF_SPEED, 4)) error("card.init failed!");
+   // Use digital 4 as the SD SS line
+   uint8_t r = card.init(SPI_HALF_SPEED, 4);
+  if (!r) error("card.init failed!");
   
   // initialize a FAT volume
   if (!volume.init(&card)) error("vol.init failed!");
@@ -101,7 +120,7 @@ void ListFiles(EthernetClient client, uint8_t flags) {
   
   root.rewind();
   client.println("<ul>");
-  while (root.readDir(p) > 0) {
+  while (root.readDir(&p) > 0) {
     // done if past last used entry
     if (p.name[0] == DIR_NAME_FREE) break;
 
