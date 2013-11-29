@@ -32,7 +32,7 @@
 /************ ETHERNET STUFF ************/
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 byte ip[] = { 192, 168, 1, 177 };
-Server server(80);
+EthernetServer server(80);
 
 /************ SDCARD STUFF ************/
 Sd2Card card;
@@ -94,7 +94,7 @@ void setup() {
   server.begin();
 }
 
-void ListFiles(Client client, uint8_t flags) {
+void ListFiles(EthernetClient client, uint8_t flags) {
   // This code is just copied from SdFile.cpp in the SDFat library
   // and tweaked to print to the client output in html!
   dir_t p;
@@ -161,7 +161,7 @@ void loop()
   char clientline[BUFSIZ];
   int index = 0;
   
-  Client client = server.available();
+  EthernetClient client = server.available();
   if (client) {
     // an http request ends with a blank line
     boolean current_line_is_blank = true;
